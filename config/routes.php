@@ -13,8 +13,7 @@ use App\Middleware\RequireApiKey;
 $app->get('/', HomeController::class);
 
 $app->get('/signup', [SignupController::class, 'signup']);
-
-$app->add(RequireApiKey::class);
+$app->post('/signup', [SignupController::class, 'store']);
 
 $app->group('/api', function (RouteCollectorProxy $group) {
     $group->get('/products', [ProductController::class, 'index']);

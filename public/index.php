@@ -5,6 +5,7 @@ declare(strict_types=1);
 define('APP_ROOT', dirname(__DIR__));
 
 require APP_ROOT . '/vendor/autoload.php';
+require APP_ROOT . '/src/helpers.php';
 
 use Dotenv\Dotenv;
 
