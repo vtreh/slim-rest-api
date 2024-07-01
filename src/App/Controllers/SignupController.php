@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Enums\HttpResponseStatus;
 use Slim\Views\PhpRenderer;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Valitron\Validator;
 use App\Repositories\UserRepository;
+use Throwable;
 
 class SignupController
 {
@@ -48,8 +50,18 @@ class SignupController
         $api_key = bin2hex(random_bytes(16));
         $data['api_key_hashed'] = hash_hmac('sha256', $api_key, $_ENV['HASH_SECRET_KEY']);
 
-        $newUserId = $this->userRepository->create($data);
+        try {
+            $userId = $this->userRepository->create($data);
+            $_SESSION['user_id'] = $userId;
+        } catch (Throwable) {
+            return $this->view->render($response, 'auth/signup.php', [
+                'errors' => ['email' => ['User with this email already exists']],
+                'data' => $data,
+            ]); 
+        }
 
-        return $response;
+        return $response
+            ->withHeader('Location', '/')
+            ->withStatus(HttpResponseStatus::TemporaryRedirect->value);
     }
 }
