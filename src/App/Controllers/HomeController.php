@@ -16,8 +16,6 @@ class HomeController
     }
     public function __invoke(Request $request, Response $response): Response
     {
-        return $this->view->render($response, 'auth/signup.php', [
-            'message' => "hello world!!!",
-        ]);
+        return $this->view->render($response, 'home.php');
     }
 }

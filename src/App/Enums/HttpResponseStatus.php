@@ -10,6 +10,8 @@ enum HttpResponseStatus: int
     case Created = 201;
     case NoContent = 204;
 
+    case TemporaryRedirect = 302;
+
     case BadRequest = 400;
     case Unauthorized = 401;
     case NotFound = 404;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Enums\HttpResponseStatus;
+use App\Repositories\UserRepository;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -14,6 +15,7 @@ class RequireApiKey
 {
     public function __construct(
         private ResponseFactory $factory,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -21,14 +23,17 @@ class RequireApiKey
     {
         if (! $request->hasHeader('X-API-Key')) {
             return $this->sendResponse(
-                'api key is missing',
+                'Api key is missing',
                 HttpResponseStatus::BadRequest->value,
             );
         }
 
-        if ($request->getHeaderLine('X-API-Key') !== 'apikey') {
+        $user = $this->userRepository
+            ->find('api_key_hashed', $request->getHeaderLine('X-API-Key'));
+
+        if (false === $user) {
             return $this->sendResponse(
-                'wrong api key',
+                'Wrong api key',
                 HttpResponseStatus::Unauthorized->value,
             );
         }
