@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Database;
+use Slim\Views\PhpRenderer;
 
 return [
     Database::class => fn () => new Database(
@@ -11,4 +12,9 @@ return [
         host: $_ENV['DB_HOST'],
         password: $_ENV['DB_PASS'],
     ),
+    PhpRenderer::class => function () {
+        $renderer = new PhpRenderer(__DIR__ . '/../views');
+        $renderer->setLayout('layout.php');
+        return $renderer;
+    },
 ];
